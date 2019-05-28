@@ -1964,6 +1964,21 @@ static void do_notify_reply(fuse_req_t req, fuse_ino_t nodeid,
 		nreq->reply(nreq, req, nodeid, inarg, buf);
 }
 
+static
+void
+do_copy_file_range(fuse_req_t req_,
+                   fuse_ino_t nodeid_,
+                   const void *inarg_)
+
+{
+  struct fuse_copy_file_range_in *arg = (struct fuse_copy_file_range_in*)inarg_;
+
+  if(req->f->op.copy_file_range)
+    req->f->op.copy_file_range(req_,nodeid_,arg);
+  else
+    fuse_reply_err(req,ENOSYS);
+}
+
 static int send_notify_iov(struct fuse_ll *f, struct fuse_chan *ch,
 			   int notify_code, struct iovec *iov, int count)
 {
