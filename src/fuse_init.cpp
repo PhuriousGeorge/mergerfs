@@ -81,6 +81,12 @@ namespace FUSE
     l::want_if_capable(conn_,FUSE_CAP_PARALLEL_DIROPS);
     l::want_if_capable(conn_,FUSE_CAP_POSIX_ACL,&c.posix_acl);
 
+    if(l::capable(conn_,FUSE_CAP_MAX_PAGES))
+      {
+        l::want(conn_,FUSE_CAP_MAX_PAGES);
+        conn_->max_pages = 256;
+      }
+
     return &c;
   }
 }

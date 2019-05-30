@@ -1790,6 +1790,8 @@ static void do_init(fuse_req_t req, fuse_ino_t nodeid, const void *inarg)
                         f->conn.capable |= FUSE_CAP_ASYNC_DIO;
                 if (arg->flags & FUSE_PARALLEL_DIROPS)
                         f->conn.capable |= FUSE_CAP_PARALLEL_DIROPS;
+                if (arg->flags & FUSE_MAX_PAGES)
+                        f->conn.capable |= FUSE_CAP_MAX_PAGES;
 	} else {
                 f->conn.want &= ~FUSE_CAP_ASYNC_READ;
 		f->conn.max_readahead = 0;
@@ -1842,6 +1844,12 @@ static void do_init(fuse_req_t req, fuse_ino_t nodeid, const void *inarg)
 	if (f->no_splice_move)
 		f->conn.want &= ~FUSE_CAP_SPLICE_MOVE;
 
+        if ((arg->flags & FUSE_MAX_PAGES) && (f->conn.want & FUSE_CAP_MAX_PAGES))
+          {
+            outarg.flags     |= FUSE_MAX_PAGES;
+            outarg.max_pages  = f->conn.max_pages;
+          }
+
 	if (f->conn.want & FUSE_CAP_ASYNC_READ)
 		outarg.flags |= FUSE_ASYNC_READ;
 	if (f->conn.want & FUSE_CAP_POSIX_LOCKS)
@@ -1890,6 +1898,7 @@ static void do_init(fuse_req_t req, fuse_ino_t nodeid, const void *inarg)
 			outarg.max_background);
 		fprintf(stderr, "   congestion_threshold=%i\n",
 		        outarg.congestion_threshold);
+                fprintf(stderr, "max_pages=%d\n",outarg.max_pages);
 	}
 
         size_t outargsize;

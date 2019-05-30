@@ -121,6 +121,7 @@ fuse_file_info
 #define FUSE_CAP_PARALLEL_DIROPS (1 << 18)
 #define FUSE_CAP_POSIX_ACL       (1 << 19)
 #define FUSE_CAP_CACHE_SYMLINKS  (1 << 20)
+#define FUSE_CAP_MAX_PAGES       (1 << 21)
 
 
 /**
@@ -188,10 +189,15 @@ struct fuse_conn_info {
 	 */
 	unsigned congestion_threshold;
 
+        /**
+         * Max pages
+         */
+        uint16_t max_pages;
+
 	/**
 	 * For future use.
 	 */
-	unsigned reserved[23];
+	unsigned reserved[22];
 };
 
 struct fuse_session;
